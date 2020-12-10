@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/csv"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -29,7 +30,9 @@ func New() (*App, error) {
 
 	a.setFlags()
 
-	fmt.Printf("Converting %s to csv\n", a.InFileName)
+	if a.InFileName == "" {
+		return nil, errors.New("input file cannot be blank")
+	}
 
 	if a.OutFileName == "" {
 		ext := filepath.Ext(a.InFileName)
@@ -37,6 +40,7 @@ func New() (*App, error) {
 		a.OutFileName = a.InFileName[0:len(a.InFileName)-len(ext)] + ".csv"
 	}
 
+	fmt.Printf("Converting %s to csv\n", a.InFileName)
 	fmt.Printf("Using outfile %s\n", a.OutFileName)
 
 	c, err := converter.New(a.InFileName)
